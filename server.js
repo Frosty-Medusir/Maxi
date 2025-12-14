@@ -15,9 +15,13 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // --- 2. Database Connection ---
-// UPDATED: Connected to your specific MongoDB Cluster
-// Note: I removed the '<' and '>' from the password.
-const mongoURI = 'mongodb+srv://roy:2021roy2021@cluster0.khjcv0e.mongodb.net/?appName=Cluster0';
+// SECURE: Now uses the environment variable from Render/.env
+const mongoURI = process.env.MONGO_URI;
+
+if (!mongoURI) {
+    console.error("❌ FATAL ERROR: MONGO_URI is not defined.");
+    process.exit(1);
+}
 
 mongoose.connect(mongoURI, {
     useNewUrlParser: true,
@@ -38,11 +42,11 @@ const projectSchema = new mongoose.Schema({
 const Project = mongoose.model('Project', projectSchema);
 
 // --- 4. Cloudinary Configuration ---
-// Using the credentials you provided earlier
+// SECURE: Now uses environment variables from Render/.env
 cloudinary.config({
-    cloud_name: 'dugalsc6w',
-    api_key: '237449992931437',
-    api_secret: '6JQ3HXDtRl1UBeONha1W13D2LSE'
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
 // Configure Multer to use Cloudinary
