@@ -14,8 +14,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
+// --- HEALTH CHECK ENDPOINT (Critical for Uptime Bots) ---
+// This is the specific route your Cron Job should hit: /ping
+app.get('/ping', (req, res) => {
+    res.status(200).send('pong');
+});
+
 // --- 2. Database Connection ---
-// SECURE: Now uses the environment variable from Render/.env
+// SECURE: Uses environment variable from Render
 const mongoURI = process.env.MONGO_URI;
 
 if (!mongoURI) {
@@ -42,7 +48,7 @@ const projectSchema = new mongoose.Schema({
 const Project = mongoose.model('Project', projectSchema);
 
 // --- 4. Cloudinary Configuration ---
-// SECURE: Now uses environment variables from Render/.env
+// SECURE: Uses environment variables from Render
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
